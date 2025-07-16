@@ -11,19 +11,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
       - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+        run: uv python install 3.10
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: uv sync
 
-      - name: Lint with flake8
-        run: |
-          flake8 app tests
+      - name: Run pre-commit hooks
+        run: uv run pre-commit run --all-files
 
       - name: Run tests
-        run: |
-          pytest
+        run: uv run pytest
