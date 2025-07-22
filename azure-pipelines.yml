@@ -54,5 +54,5 @@ stages:
               MY_SECRET: $(MY_SECRET)
 
           - script: |
-              echo "I'm pretending to deploy to production..."
+              echo "I'm pretending to deploy to production!!!"
             displayName: 'Pretend to deploy'
