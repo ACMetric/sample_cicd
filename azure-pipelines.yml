@@ -3,36 +3,59 @@ trigger:
     include:
       - main
 
+pr:
+  branches:
+    include:
+      - dev
+      - main
+
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '3.10'
+variables:
+  MY_SECRET: $(MY_SECRET)
 
-  - script: |
-      curl -LsSf https://astral.sh/uv/install.sh | sh
-    displayName: 'Install uv'
+stages:
+  - stage: ContinuousIntegration
+    displayName: 'Continuous Integration'
+    jobs:
+      - job: CI
+        displayName: 'CI Job'
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.10'
 
-  - script: |
-      uv python install 3.10
-    displayName: 'Set Python to 3.10 using uv'
+          - script: |
+              curl -LsSf https://astral.sh/uv/install.sh | sh
+            displayName: 'Install uv'
 
-  - script: |
-      uv sync
-    displayName: 'Install dependencies using uv'
+          - script: |
+              uv python install 3.10
+            displayName: 'Set Python to 3.10 using uv'
 
-  - script: |
-      uv run pre-commit run --all-files
-    displayName: 'Run pre-commit hooks'
+          - script: |
+              uv sync
+            displayName: 'Install dependencies using uv'
 
-  - script: |
-      uv run pytest
-    displayName: 'Run tests'
+          - script: |
+              uv run pre-commit run --all-files
+            displayName: 'Run pre-commit hooks'
 
-  - script: |
-      echo "Secret value is $(MY_SECRET)"
-    displayName: 'Demo secret usage'
-    env:
-      MY_SECRET: $(MY_SECRET)
+  - stage: ContinuousDeployment
+    displayName: 'Continuous Deployment'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    dependsOn: ContinuousIntegration
+    jobs:
+      - job: CD
+        displayName: 'CD Job'
+        steps:
+          - script: |
+              echo "Secret value is $(MY_SECRET)"
+            displayName: 'Demo secret usage'
+            env:
+              MY_SECRET: $(MY_SECRET)
+
+          - script: |
+              echo "Deploying to production..."
+            displayName: 'Pretend to deploy'
