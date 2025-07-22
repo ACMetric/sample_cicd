@@ -12,14 +12,21 @@ steps:
       versionSpec: '3.10'
 
   - script: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
-    displayName: 'Install dependencies'
+      curl -LsSf https://astral.sh/uv/install.sh | sh
+    displayName: 'Install uv'
 
   - script: |
-      flake8 app tests
-    displayName: 'Lint with flake8'
+      uv python install 3.10
+    displayName: 'Set Python to 3.10 using uv'
 
   - script: |
-      pytest
+      uv sync
+    displayName: 'Install dependencies using uv'
+
+  - script: |
+      uv run pre-commit run --all-files
+    displayName: 'Run pre-commit hooks'
+
+  - script: |
+      uv run pytest
     displayName: 'Run tests'
