@@ -12,9 +12,6 @@ pr:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  MY_SECRET: $(MY_SECRET)
-
 stages:
   - stage: ContinuousIntegration
     displayName: 'Continuous Integration'
@@ -51,7 +48,7 @@ stages:
         displayName: 'CD Job'
         steps:
           - script: |
-              echo "Secret value is $(MY_SECRET)"
+              echo "Secret value is $MY_SECRET"
             displayName: 'Demo secret usage'
             env:
               MY_SECRET: $(MY_SECRET)
