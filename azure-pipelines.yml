@@ -30,3 +30,9 @@ steps:
   - script: |
       uv run pytest
     displayName: 'Run tests'
+
+  - script: |
+      echo "Secret value is $(MY_SECRET)"
+    displayName: 'Demo secret usage'
+    env:
+      MY_SECRET: $(MY_SECRET)
