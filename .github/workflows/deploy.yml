@@ -30,6 +30,10 @@ jobs:
 
       - name: Run pre-commit hooks
         run: uv run pre-commit run --all-files
+
+      - name: Run tests
+        run: uv run pytest
+
   continuous-deployment:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
