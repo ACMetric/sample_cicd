@@ -39,6 +39,10 @@ stages:
               uv run pre-commit run --all-files
             displayName: 'Run pre-commit hooks'
 
+          - script: |
+              uv run pytest
+            displayName: 'Run tests using uv'
+
   - stage: ContinuousDeployment
     displayName: 'Continuous Deployment'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
@@ -54,5 +58,5 @@ stages:
               MY_SECRET: $(MY_SECRET)
 
           - script: |
-              echo "I'm pretending to deploy to production..."
+              echo "I'm pretending to deploy to production!!!"
             displayName: 'Pretend to deploy'
